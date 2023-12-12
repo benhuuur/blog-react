@@ -1,0 +1,1 @@
+"a circular reference in the update value, updateValue:\n{ likes: [ 0, [Query] ] }\nupdatePath: ''"

@@ -3,6 +3,7 @@ const fs = require('fs');
 
 const AuthorController = require('./AuthorController')
 const Article = require('../model/article')
+const User = require('../model/user')
 
 class ArticleController {
     static createLog(error) {
@@ -26,7 +27,7 @@ class ArticleController {
             const article = {
                 title,
                 text,
-                likes: 0,
+                likes: [],
                 author,
                 createdAt: Date.now(),
                 updatedAt: Date.now(),
@@ -37,6 +38,35 @@ class ArticleController {
         } catch (error) {
             ArticleController.createLog(error);
             return res.status(500).send({ error: "Falha ao salvar o artigo", data: error.message });
+        }
+    }
+    static async likeArticle(req, res) {
+        const { id } = req.params;
+        const { user } = req.body;
+        let likes = [];
+
+        if (!id)
+            return res.status(400).send({ message: "No id provider" })
+        if (!user)
+            return res.status(400).send({ message: "No user provider" })
+
+        try {
+            const article = await Article.findById(id);
+            const article_likes = article.likes;
+
+            article_likes.forEach(element => {
+                if (element != user) 
+                    likes.push(element)
+            });
+            if (likes.length == article_likes.length)
+                likes.push(user)
+            await Article.findByIdAndUpdate(id, {
+                likes: likes
+            })
+            return res.status(200).send();
+        } catch (error) {
+            ArticleController.createLog(error);
+            return res.status(500).send({ error: "Falha ao curtir", data: error.message })
         }
     };
 }

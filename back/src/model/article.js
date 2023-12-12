@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { authorSchema } = require('./author');
+const { User } = require('./user')
 const Article = mongoose.model('Article',
     new mongoose.Schema({
         title: {
@@ -17,7 +18,7 @@ const Article = mongoose.model('Article',
             required: true
         },
         likes: {
-            type: Number,
+            type: [String],
             required: true
         },
         createdAt: {
